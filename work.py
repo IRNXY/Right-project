@@ -1,9 +1,7 @@
-import pygame
-import os
+# импортируем файл с картой
 from Map import *
 
 FPS = 60
-
 
 pygame.init()
 pygame.mixer.init()
@@ -12,9 +10,8 @@ pygame.display.set_caption("My Game")
 clock = pygame.time.Clock()
 pygame.display.flip()
 
-
+# вызываем объект Map
 Mapp = Map(file_name='1.txt', room_x=1, room_y=0)
-
 
 running = True
 while running:
@@ -22,7 +19,7 @@ while running:
     clock.tick(FPS)
     # Ввод процесса (события)
     for event in pygame.event.get():
-        # check for closing window
+        # проверка для закрытия окна
         if event.type == pygame.QUIT:
             running = False
 
