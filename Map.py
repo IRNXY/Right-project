@@ -1,5 +1,5 @@
 import os
-import pygame
+from pygame_init import *
 
 # размер карты в символах
 MAP_X = 15
@@ -9,11 +9,6 @@ ZOOM = 60
 # задаём размер окна
 WIDTH = MAP_X * ZOOM
 HEIGHT = MAP_Y * ZOOM
-
-# создаём группы спрайтов
-all_sprites = pygame.sprite.Group()
-wall_sprites = pygame.sprite.Group()
-box_sprites = pygame.sprite.Group()
 
 class Wall(pygame.sprite.Sprite):
     # передаём координаты объекта на карте

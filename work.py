@@ -1,5 +1,6 @@
 # импортируем файл с картой
 from Map import *
+from pygame_init import *
 
 FPS = 60
 
