@@ -10,6 +10,7 @@ ZOOM = 60
 WIDTH = MAP_X * ZOOM
 HEIGHT = MAP_Y * ZOOM
 
+
 class Wall(pygame.sprite.Sprite):
     # передаём координаты объекта на карте
     def __init__(self, x, y):
@@ -19,13 +20,15 @@ class Wall(pygame.sprite.Sprite):
         game_folder = os.path.dirname(__file__)
         img_folder = os.path.join(game_folder, 'img')
         # загружаем картинку стены
-        self.image = pygame.image.load(os.path.join(img_folder, 'wall.jpg')).convert()
+        self.image = pygame.image.load(
+            os.path.join(img_folder, 'wall.jpg')).convert()
         self.rect = self.image.get_rect()
         # указываем координаты верхнкго левого угла
         self.rect.topleft = (x, y)
 
     def update(self):
         pass
+
 
 class Box(pygame.sprite.Sprite):
     # передаём координаты объекта на карте
@@ -44,6 +47,85 @@ class Box(pygame.sprite.Sprite):
 
     def update(self):
         pass
+
+
+class Coin(pygame.sprite.Sprite):
+    def __init__(self, center):
+        pygame.sprite.Sprite.__init__(self)
+        game_folder = os.path.dirname(__file__)
+        img_folder = os.path.join(game_folder, 'img')
+        # загружаем картинку монетки
+        self.image = pygame.image.load(
+            os.path.join(img_folder, 'Coin.png')).convert()
+        self.image = pygame.transform.scale(self.image, (40, 40))
+        self.image.set_colorkey(pygame.Color('white'))
+        self.rect = self.image.get_rect()
+        self.rect.center = center
+
+    def update(self):
+        pass
+
+
+class Mob_Spirit(pygame.sprite.Sprite):
+    def __init__(self, center):
+        pygame.sprite.Sprite.__init__(self)
+        game_folder = os.path.dirname(__file__)
+        img_folder = os.path.join(game_folder, 'img')
+        # загружаем картинку призрака
+        self.image = pygame.image.load(
+            os.path.join(img_folder, 'monster.jpg')).convert()
+        self.image = pygame.transform.scale(self.image, (70, 70))
+        self.image.set_colorkey(pygame.Color('white'))
+        self.rect = self.image.get_rect()
+        self.rect.center = center
+
+    def update(self):
+        pass
+
+
+lg = []
+game_folder = os.path.dirname(__file__)
+img_folder = os.path.join(game_folder, 'img')
+img1 = pygame.image.load(os.path.join(img_folder, 'monster.jpg'))
+img2 = pygame.transform.scale(img1, (80, 80))
+# player_img = pygame.image.load(os.path.join(img_folder, 'images.jpg')).convert()
+for i in range(9):
+    filename = 'explosion0{}.png'.format(i)
+    # img = pygame.image.load(os.path.join(img_folder, filename)).convert()
+    img = pygame.image.load(os.path.join(img_folder, filename))
+    img.set_colorkey(pygame.Color('black'))
+    img_lg = pygame.transform.scale(img, (90, 90))
+    lg.append(img_lg)
+
+
+class Explosion(pygame.sprite.Sprite):
+    def __init__(self, center):
+        pygame.sprite.Sprite.__init__(self)
+        self.frame = 0
+        self.image = lg[self.frame]
+        self.rect = self.image.get_rect()
+        self.rect.center = center
+        self.last_update = pygame.time.get_ticks()
+        self.frame_rate = 50
+
+
+    def update(self):
+        now = pygame.time.get_ticks()
+        if now - self.last_update > self.frame_rate:
+            self.last_update = now
+            self.frame += 1
+            # print(self.frame, len(lg))
+            if self.frame == len(lg):
+                self.kill()
+                self.image = img2
+
+            else:
+                center = self.rect.center
+                self.image = lg[self.frame]
+                self.rect = self.image.get_rect()
+                self.rect.center = center
+
+
 
 class Map:
     # передаём имя файла с txt картой, координаты комнаты по х и по у
@@ -82,20 +164,24 @@ class Map:
         for y in range(MAP_Y):
             for x in range(MAP_X):
                 # print(x, y, self.string[y + MAP_Y * self.room_y][x + MAP_X * self.room_x])
-                if self.string[y + MAP_Y * self.room_y][x + MAP_X * self.room_x] == '#':
+                if self.string[y + MAP_Y * self.room_y][
+                    x + MAP_X * self.room_x] == '#':
                     # предаём координаты объекта с учётом сдвига по комнатам
                     wall = Wall(ZOOM * x, ZOOM * y)
                     # добовляем объект Wall к списку спрайтов стен
                     wall_sprites.add(wall)
                     # добовляем объект Wall к общему списку всех спрайтов
                     all_sprites.add(wall)
-                elif self.string[y + MAP_Y * self.room_y][x + MAP_X * self.room_x] == '&':
+                if self.string[y + MAP_Y * self.room_y][
+                    x + MAP_X * self.room_x] == '&':
                     # предаём координаты объекта с учётом сдвига по комнатам
                     box = Box(ZOOM * x, ZOOM * y)
                     # добовляем объект Box к списку спрайтов стен
-                    wall_sprites.add(box)
+                    box_sprites.add(box)
                     # добовляем объект Box к общему списку всех спрайтов
                     all_sprites.add(box)
+
+
 
     # читаем файл с txt картой
     def open_file(self, filename):
