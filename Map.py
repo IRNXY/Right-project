@@ -1,14 +1,14 @@
 import os
 from pygame_init import *
 
-# размер карты в символах
-MAP_X = 15
-MAP_Y = 9
-# масштаб единицы карты (клетки)
-ZOOM = 60
-# задаём размер окна
-WIDTH = MAP_X * ZOOM
-HEIGHT = MAP_Y * ZOOM
+# # размер карты в символах
+# MAP_X = 15
+# MAP_Y = 9
+# # масштаб единицы карты (клетки)
+# ZOOM = 60
+# # задаём размер окна
+# WIDTH = MAP_X * ZOOM
+# HEIGHT = MAP_Y * ZOOM
 
 
 class Wall(pygame.sprite.Sprite):
@@ -156,8 +156,57 @@ class Map:
             'nothing': 'nothing.jpg'
         }
 
+        self.start_screen()
         self.open_file(file_name)
         self.sprites_map()
+
+    def start_screen(self):
+        runing = True
+        play = [200, 200, 190, 50]
+        discr = [430, 200, 190, 50]
+        intro_text = [
+            "                                                                     ЗАСТАВКА"]
+        game_folder = os.path.dirname(__file__)
+        img_folder = os.path.join(game_folder, 'img')
+        fon = pygame.image.load(os.path.join(img_folder, 'fon_better.jpg'))
+        fon = pygame.transform.scale(fon, (MAP_X * ZOOM, MAP_Y * ZOOM))
+        fon.set_colorkey(pygame.Color('black'))
+
+        screen.blit(fon, (0, 0))
+        font = pygame.font.Font(None, 30)
+        text_coord = 50
+        for line in intro_text:
+            string_rendered = font.render(line, 1, pygame.Color("black"))
+            intro_rect = string_rendered.get_rect()
+            text_coord += 10
+            intro_rect.top = text_coord
+            intro_rect.x = 10
+            text_coord += intro_rect.height
+            screen.blit(string_rendered, intro_rect)
+        pygame.draw.rect(screen, (0, 30, 160),
+                         (play[0], play[1], play[2], play[3]))
+        pygame.draw.rect(screen, (0, 30, 160),
+                         (discr[0], discr[1], discr[2], discr[3]))
+        while runing:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    # sys.exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if play[0] <= event.pos[0] and play[0] + play[2] >= \
+                            event.pos[0] and \
+                            play[1] <= event.pos[1] and play[1] + play[3] >= \
+                            event.pos[1]:
+                        runing = False
+
+                    elif discr[0] <= event.pos[0] and discr[0] + discr[2] >= \
+                            event.pos[0] and \
+                            discr[1] <= event.pos[1] and discr[1] + discr[3] >= \
+                            event.pos[1]:
+                        pass
+
+            pygame.display.flip()
+            # clock.tick(60)
 
     # отрисовка спрайтов на карте
     def sprites_map(self):
@@ -172,6 +221,7 @@ class Map:
                     wall_sprites.add(wall)
                     # добовляем объект Wall к общему списку всех спрайтов
                     all_sprites.add(wall)
+
                 if self.string[y + MAP_Y * self.room_y][
                     x + MAP_X * self.room_x] == '&':
                     # предаём координаты объекта с учётом сдвига по комнатам
@@ -181,6 +231,13 @@ class Map:
                     # добовляем объект Box к общему списку всех спрайтов
                     all_sprites.add(box)
 
+                # if self.string[y + MAP_Y * self.room_y][
+                #     x + MAP_X * self.room_x] == '@':
+                #     Play_plaer(y + MAP_Y * self.room_y, x + MAP_X * self.room_x)
+
+                # if self.string[y + MAP_Y * self.room_y][
+                #     x + MAP_X * self.room_x] == 'x':
+                #     Move_Enemy(y + MAP_Y * self.room_y, x + MAP_X * self.room_x)
 
 
     # читаем файл с txt картой
@@ -193,3 +250,24 @@ class Map:
                 count += 1
                 for i in line:
                     self.string[count].append(i)
+
+    def change_map(self, x, y):
+        all_sprites.remove()
+        wall_sprites.remove()
+        box_sprites.remove()
+        mobs_sprites.remove()
+        swords_sprites.remove()
+        explosion_sprites.remove()
+        coins_sprites.remove()
+
+        if x < 0 < y:
+            Mapp = Map(file_name='1.txt', room_x=0, room_y=1)
+
+        elif x > 0 < y:
+            Mapp = Map(file_name='1.txt', room_x=2, room_y=1)
+
+        elif x < 0 > y:
+            Mapp = Map(file_name='1.txt', room_x=1, room_y=2)
+
+        elif x > 0 < y:
+            Mapp = Map(file_name='1.txt', room_x=0, room_y=1)

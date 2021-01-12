@@ -13,6 +13,7 @@ pygame.display.flip()
 
 # вызываем объект Map
 Mapp = Map(file_name='1.txt', room_x=1, room_y=1)
+# Mapp.change_map(-20, 30)
 
 running = True
 while running:
