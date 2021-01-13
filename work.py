@@ -1,6 +1,7 @@
 # импортируем файл с картой
 from Map import *
 from pygame_init import *
+from Menu import *
 
 FPS = 60
 
@@ -17,54 +18,34 @@ class Start_screen(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         game_folder = os.path.dirname(__file__)
         img_folder = os.path.join(game_folder, 'img')
-        fon = pygame.image.load(os.path.join(img_folder, 'fon_better.jpg'))
+        fon = pygame.image.load(os.path.join(img_folder, 'dark background.png'))
         fon = pygame.transform.scale(fon, (MAP_X * ZOOM, MAP_Y * ZOOM))
 
-        # runing = True
-        # play = [200, 200, 190, 50]
-        # discr = [430, 200, 190, 50]
-        intro_text = ["                                                                   ЗАСТАВКА"]
-        # # fon.set_colorkey(pygame.Color('black'))
-        #
+        intro_text = ["                                                                 ЗАСТАВКА"]
         screen.blit(fon, (0, 0))
         font = pygame.font.Font(None, 30)
         text_coord = 70
+
         for line in intro_text:
-            string_rendered = font.render(line, 1, pygame.Color("black"))
+            string_rendered = font.render(line, 1, pygame.Color("white"))
             intro_rect = string_rendered.get_rect()
             text_coord += 10
             intro_rect.top = text_coord
             intro_rect.x = 10
             text_coord += intro_rect.height
             screen.blit(string_rendered, intro_rect)
-        # # pygame.draw.rect(screen, (0, 30, 160),
-        # #                  (play[0], play[1], play[2], play[3]))
-        # # pygame.draw.rect(screen, (0, 30, 160),
-        # #                  (discr[0], discr[1], discr[2], discr[3]))
+
         runing = True
         pygame.display.flip()
         while runing:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    # sys.exit()
+                    exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
+                    # menu = Menu()
                     Map(file_name='1.txt', room_x=1, room_y=1)
                     runing = False
-
-                    # if play[0] <= event.pos[0] and play[0] + play[2] >= \
-                    #         event.pos[0] and \
-                    #         play[1] <= event.pos[1] and play[1] + play[3] >= \
-                    #         event.pos[1]:
-                    #     runing = False
-                    #
-                    #     elif discr[0] <= event.pos[0] and discr[0] + discr[2] >= \
-                    #             event.pos[0] and \
-                    #             discr[1] <= event.pos[1] and discr[1] + discr[3] >= \
-                    #             event.pos[1]:
-                    #         pass
-
-
                 # clock.tick(60)
 
 
