@@ -1,5 +1,8 @@
 import pygame
 
+status_game = 'screen'
+
+
 # размер карты в символах
 MAP_X = 15
 MAP_Y = 9
@@ -9,6 +12,7 @@ ZOOM = 60
 WIDTH = MAP_X * ZOOM
 HEIGHT = MAP_Y * ZOOM
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
+
 
 # создаём группы спрайтов
 all_sprites = pygame.sprite.Group()

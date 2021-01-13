@@ -4,8 +4,12 @@ from config import *
 
 # Импортируем объекты
 
+from start_screen import *
+
 # импортируем файл с картой
 from Map import *
+
+
 
 # from Menu import *
 
