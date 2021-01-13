@@ -9,7 +9,7 @@ from Map import *
 
 # from Menu import *
 
-# from Player import *
-# from Enemy import *
+from Player import *
+from Enemy import *
 # from Screen import *
 

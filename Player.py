@@ -1,3 +1,5 @@
+from config import *
+
 class Play_plaer(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__(all_sprites)

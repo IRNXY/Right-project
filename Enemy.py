@@ -1,3 +1,5 @@
+from config import *
+
 class Move_Enemy(pygame.sprite.Sprite):
     def __init__(self, vrag_inf):
         super().__init__(all_sprites)

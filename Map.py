@@ -1,6 +1,6 @@
 import os
-from pygame_init import *
-
+# from pygame_init import *
+from config import *
 
 # # размер карты в символах
 # MAP_X = 15
