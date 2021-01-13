@@ -1,6 +1,7 @@
 import os
 from pygame_init import *
 
+
 # # размер карты в символах
 # MAP_X = 15
 # MAP_Y = 9
@@ -9,7 +10,6 @@ from pygame_init import *
 # # задаём размер окна
 # WIDTH = MAP_X * ZOOM
 # HEIGHT = MAP_Y * ZOOM
-
 
 class Wall(pygame.sprite.Sprite):
     # передаём координаты объекта на карте
@@ -73,7 +73,7 @@ class Mob_Spirit(pygame.sprite.Sprite):
         img_folder = os.path.join(game_folder, 'img')
         # загружаем картинку призрака
         self.image = pygame.image.load(
-            os.path.join(img_folder, 'monster.jpg')).convert()
+            os.path.join(img_folder, 'monster.png')).convert()
         self.image = pygame.transform.scale(self.image, (70, 70))
         self.image.set_colorkey(pygame.Color('white'))
         self.rect = self.image.get_rect()
@@ -86,8 +86,9 @@ class Mob_Spirit(pygame.sprite.Sprite):
 lg = []
 game_folder = os.path.dirname(__file__)
 img_folder = os.path.join(game_folder, 'img')
-img1 = pygame.image.load(os.path.join(img_folder, 'monster.jpg'))
+img1 = pygame.image.load(os.path.join(img_folder, 'monster.png'))
 img2 = pygame.transform.scale(img1, (80, 80))
+
 # player_img = pygame.image.load(os.path.join(img_folder, 'images.jpg')).convert()
 for i in range(9):
     filename = 'explosion0{}.png'.format(i)
@@ -108,7 +109,6 @@ class Explosion(pygame.sprite.Sprite):
         self.last_update = pygame.time.get_ticks()
         self.frame_rate = 50
 
-
     def update(self):
         now = pygame.time.get_ticks()
         if now - self.last_update > self.frame_rate:
@@ -124,7 +124,6 @@ class Explosion(pygame.sprite.Sprite):
                 self.image = lg[self.frame]
                 self.rect = self.image.get_rect()
                 self.rect.center = center
-
 
 
 class Map:
@@ -156,57 +155,11 @@ class Map:
             'nothing': 'nothing.jpg'
         }
 
-        self.start_screen()
+        # self.start_screen()
         self.open_file(file_name)
         self.sprites_map()
 
-    def start_screen(self):
-        runing = True
-        play = [200, 200, 190, 50]
-        discr = [430, 200, 190, 50]
-        intro_text = [
-            "                                                                     ЗАСТАВКА"]
-        game_folder = os.path.dirname(__file__)
-        img_folder = os.path.join(game_folder, 'img')
-        fon = pygame.image.load(os.path.join(img_folder, 'fon_better.jpg'))
-        fon = pygame.transform.scale(fon, (MAP_X * ZOOM, MAP_Y * ZOOM))
-        fon.set_colorkey(pygame.Color('black'))
 
-        screen.blit(fon, (0, 0))
-        font = pygame.font.Font(None, 30)
-        text_coord = 50
-        for line in intro_text:
-            string_rendered = font.render(line, 1, pygame.Color("black"))
-            intro_rect = string_rendered.get_rect()
-            text_coord += 10
-            intro_rect.top = text_coord
-            intro_rect.x = 10
-            text_coord += intro_rect.height
-            screen.blit(string_rendered, intro_rect)
-        pygame.draw.rect(screen, (0, 30, 160),
-                         (play[0], play[1], play[2], play[3]))
-        pygame.draw.rect(screen, (0, 30, 160),
-                         (discr[0], discr[1], discr[2], discr[3]))
-        while runing:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    # sys.exit()
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if play[0] <= event.pos[0] and play[0] + play[2] >= \
-                            event.pos[0] and \
-                            play[1] <= event.pos[1] and play[1] + play[3] >= \
-                            event.pos[1]:
-                        runing = False
-
-                    elif discr[0] <= event.pos[0] and discr[0] + discr[2] >= \
-                            event.pos[0] and \
-                            discr[1] <= event.pos[1] and discr[1] + discr[3] >= \
-                            event.pos[1]:
-                        pass
-
-            pygame.display.flip()
-            # clock.tick(60)
 
     # отрисовка спрайтов на карте
     def sprites_map(self):
@@ -239,7 +192,6 @@ class Map:
                 #     x + MAP_X * self.room_x] == 'x':
                 #     Move_Enemy(y + MAP_Y * self.room_y, x + MAP_X * self.room_x)
 
-
     # читаем файл с txt картой
     def open_file(self, filename):
         count = -1
@@ -261,13 +213,30 @@ class Map:
         coins_sprites.remove()
 
         if x < 0 < y:
-            Mapp = Map(file_name='1.txt', room_x=0, room_y=1)
+            Map(file_name='1.txt', room_x=0, room_y=1)
 
         elif x > 0 < y:
-            Mapp = Map(file_name='1.txt', room_x=2, room_y=1)
+            Map(file_name='1.txt', room_x=2, room_y=1)
 
         elif x < 0 > y:
-            Mapp = Map(file_name='1.txt', room_x=1, room_y=2)
+            Map(file_name='1.txt', room_x=1, room_y=2)
 
         elif x > 0 < y:
             Mapp = Map(file_name='1.txt', room_x=0, room_y=1)
+
+
+class Game_over(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+
+        game_folder = os.path.dirname(__file__)
+        img_folder = os.path.join(game_folder, 'img')
+        game_over = pygame.image.load(
+            os.path.join(img_folder, 'fon_better.jpg'))
+        game_over = pygame.transform.scale(game_over,
+                                           (MAP_X * ZOOM, MAP_Y * ZOOM))
+        # self.rect = self.image.get_rect()
+        # self.rect.center = center
+
+    def update(self):
+        pass
