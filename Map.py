@@ -1,5 +1,7 @@
 import os
 from config import *
+from pygame_init import *
+from Player import Player
 
 # # размер карты в символах
 # MAP_X = 15
@@ -157,7 +159,7 @@ class Map:
         # self.start_screen()
         self.open_file(file_name)
         self.sprites_map()
-
+        self.sprite_player(5, 7)
 
 
     # отрисовка спрайтов на карте
@@ -168,28 +170,42 @@ class Map:
                 if self.string[y + MAP_Y * self.room_y][
                     x + MAP_X * self.room_x] == '#':
                     # предаём координаты объекта с учётом сдвига по комнатам
-                    wall = Wall(ZOOM * x, ZOOM * y)
+                    self.wall = Wall(ZOOM * x, ZOOM * y)
                     # добовляем объект Wall к списку спрайтов стен
-                    wall_sprites.add(wall)
+                    wall_sprites.add(self.wall)
                     # добовляем объект Wall к общему списку всех спрайтов
-                    all_sprites.add(wall)
+                    all_sprites.add(self.wall)
 
                 if self.string[y + MAP_Y * self.room_y][
                     x + MAP_X * self.room_x] == '&':
                     # предаём координаты объекта с учётом сдвига по комнатам
-                    box = Box(ZOOM * x, ZOOM * y)
+                    self.box = Box(ZOOM * x, ZOOM * y)
                     # добовляем объект Box к списку спрайтов стен
-                    box_sprites.add(box)
+                    box_sprites.add(self.box)
                     # добовляем объект Box к общему списку всех спрайтов
-                    all_sprites.add(box)
+                    all_sprites.add(self.box)
+
+                if self.string[y + MAP_Y * self.room_y][
+                    x + MAP_X * self.room_x] == 'x':
+                    self.enemy = Move_Enemy(y + MAP_Y * self.room_y,
+                                            x + MAP_X * self.room_x)
+                    all_sprites.add(self.enemy)
+                    mobs_sprites.add(self.enemy)
+
 
                 # if self.string[y + MAP_Y * self.room_y][
                 #     x + MAP_X * self.room_x] == '@':
-                #     Play_plaer(y + MAP_Y * self.room_y, x + MAP_X * self.room_x)
+                #     self.plaer = Play_plaer(y + MAP_Y * self.room_y, x + MAP_X * self.room_x)
+                #     all_sprites.add(self.plaer)
 
-                # if self.string[y + MAP_Y * self.room_y][
-                #     x + MAP_X * self.room_x] == 'x':
-                #     Move_Enemy(y + MAP_Y * self.room_y, x + MAP_X * self.room_x)
+    def sprite_player(self, x, y):
+        player = Player(x, y)
+        all_sprites.add(player)
+
+
+    def cord_pl(self):
+        return self.plaer
+
 
     # читаем файл с txt картой
     def open_file(self, filename):
