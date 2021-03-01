@@ -20,7 +20,7 @@ YELLOW = (255, 255, 0)
 # pygame.mixer.init()
 # screen = pygame.display.set_mode((WIDTH, HEIGHT))
 # clock = pygame.time.Clock()
-#
+
 
 
 class Player(pygame.sprite.Sprite):
@@ -44,13 +44,14 @@ class Player(pygame.sprite.Sprite):
         # self.image = pygame.Surface((50, 40))
         # self.image.fill(GREEN)
         self.rect = self.image.get_rect()
-        self.rect.centerx = x * ZOOM
-        self.rect.bottom = y * ZOOM
+        self.rect.center = (x * ZOOM, y * ZOOM)
         # self.rect.centerx = x * ZOOM + ZOOM // 2
         # self.rect.bottom = y * ZOOM + ZOOM // 2
         self.speedx = 0
         self.speedy = 0
         self.direction = 'left'
+        self.coins_counter = 0
+        self.live = 10
 
 
     def update(self):
@@ -79,13 +80,19 @@ class Player(pygame.sprite.Sprite):
         self.rect.x += self.speedx
         self.rect.y += self.speedy
 
-        hits = pygame.sprite.spritecollide(self, wall_sprites, False)
-        hits2 = pygame.sprite.spritecollide(self, box_sprites, False)
-        if hits or hits2:
-            self.rect.x -= self.speedx
-            self.rect.y -= self.speedy
+        # hits = pygame.sprite.spritecollide(self, wall_sprites, False)
 
-        keyboard = pygame.key.get_pressed()
-        if keyboard[pygame.K_q]:
+        # hits2 = pygame.sprite.spritecollide(self, box_sprites, False)
+
+
+        # if hits:
+        #     self.rect.x -= self.speedx
+        #     self.rect.y -= self.speedy
+
+        hit = pygame.sprite.spritecollide(self, coins_sprites, True)
+        if hit:
+            self.coins_counter += 1
+
+        # keyboard = pygame.key.get_pressed()
+        if keyboard[pygame.K_SPACE]:
             self.picture_frame = -1
-

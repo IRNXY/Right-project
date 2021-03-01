@@ -11,8 +11,7 @@ from start_screen import *
 from Map import *
 map_obj = Map(file_name='1.txt', room_x=1, room_y=1)
 
-# from Menu import *
-
+from Ghost import *
 # from Menu import *
 
 from Player import *

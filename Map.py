@@ -2,6 +2,7 @@ import os
 from config import *
 from pygame_init import *
 from Player import Player
+from random import randint
 
 # # размер карты в символах
 # MAP_X = 15
@@ -31,27 +32,22 @@ class Wall(pygame.sprite.Sprite):
         pass
 
 
-class Box(pygame.sprite.Sprite):
-    # передаём координаты объекта на карте
-    def __init__(self, x, y):
-        # наследуем встроенный класс Sprite
-        pygame.sprite.Sprite.__init__(self)
-        # путь к файлу где находится программа
-        game_folder = os.path.dirname(__file__)
-        img_folder = os.path.join(game_folder, 'img')
-        # загружаем картинку ящика
-        self.image = pygame.image.load(
-            os.path.join(img_folder, 'Box.jpg')).convert()
-        self.rect = self.image.get_rect()
-        # указываем координаты верхнкго левого угла
-        self.rect.topleft = (x, y)
 
-    def update(self):
-        pass
-
+def draw_shield_bar(surf, x, y, pct):
+    if pct < 0:
+        pct = 0
+    BAR_LENGTH = 100
+    BAR_HEIGHT = 10
+    GREEN = (0, 255, 0)
+    WHITE = (255, 255, 255)
+    fill = (pct / 10) * BAR_LENGTH
+    outline_rect = pygame.Rect(x, y, BAR_LENGTH, BAR_HEIGHT)
+    fill_rect = pygame.Rect(x, y, fill, BAR_HEIGHT)
+    pygame.draw.rect(surf, GREEN, fill_rect)
+    pygame.draw.rect(surf, WHITE, outline_rect, 2)
 
 class Coin(pygame.sprite.Sprite):
-    def __init__(self, center):
+    def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         game_folder = os.path.dirname(__file__)
         img_folder = os.path.join(game_folder, 'img')
@@ -61,28 +57,10 @@ class Coin(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (40, 40))
         self.image.set_colorkey(pygame.Color('white'))
         self.rect = self.image.get_rect()
-        self.rect.center = center
+        self.rect.topright = (x, y)
 
     def update(self):
         pass
-
-
-class Mob_Spirit(pygame.sprite.Sprite):
-    def __init__(self, center):
-        pygame.sprite.Sprite.__init__(self)
-        game_folder = os.path.dirname(__file__)
-        img_folder = os.path.join(game_folder, 'img')
-        # загружаем картинку призрака
-        self.image = pygame.image.load(
-            os.path.join(img_folder, 'monster.png')).convert()
-        self.image = pygame.transform.scale(self.image, (70, 70))
-        self.image.set_colorkey(pygame.Color('white'))
-        self.rect = self.image.get_rect()
-        self.rect.center = center
-
-    def update(self):
-        pass
-
 
 lg = []
 game_folder = os.path.dirname(__file__)
@@ -101,12 +79,12 @@ for i in range(9):
 
 
 class Explosion(pygame.sprite.Sprite):
-    def __init__(self, center):
+    def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.frame = 0
         self.image = lg[self.frame]
         self.rect = self.image.get_rect()
-        self.rect.center = center
+        self.rect.topleft = (x, y)
         self.last_update = pygame.time.get_ticks()
         self.frame_rate = 50
 
@@ -137,6 +115,7 @@ class Map:
         self.room_x = room_x
         self.room_y = room_y
 
+
         # значение символов карты
         self.symbols = {
             '@': 'player',
@@ -159,7 +138,10 @@ class Map:
         # self.start_screen()
         self.open_file(file_name)
         self.sprites_map()
-        self.sprite_player(5, 7)
+        # self.sprite_player(5, 7)
+        self.player = Player(5, 7)
+        all_sprites.add(self.player)
+        print('>>>>>>>>>>', self.player)
 
 
     # отрисовка спрайтов на карте
@@ -186,11 +168,19 @@ class Map:
                     all_sprites.add(self.box)
 
                 if self.string[y + MAP_Y * self.room_y][
-                    x + MAP_X * self.room_x] == 'x':
-                    self.enemy = Move_Enemy(y + MAP_Y * self.room_y,
-                                            x + MAP_X * self.room_x)
-                    all_sprites.add(self.enemy)
-                    mobs_sprites.add(self.enemy)
+                    x + MAP_X * self.room_x] == 'c':
+                    # предаём координаты объекта с учётом сдвига по комнатам
+                    self.coin = Coin(ZOOM * x, ZOOM * y)
+                    # добовляем объект Box к списку спрайтов стен
+                    coins_sprites.add(self.coin)
+                    # добовляем объект Box к общему списку всех спрайтов
+                    all_sprites.add(self.coin)
+
+                # if self.string[y + MAP_Y * self.room_y][
+                #     x + MAP_X * self.room_x] == 'x':
+                #     self.enemy = Move_Enemy(y + MAP_Y * self.room_y, x + MAP_X * self.room_x)
+                #     all_sprites.add(self.enemy)
+                #     mobs_sprites.add(self.enemy)
 
 
                 # if self.string[y + MAP_Y * self.room_y][
@@ -198,13 +188,14 @@ class Map:
                 #     self.plaer = Play_plaer(y + MAP_Y * self.room_y, x + MAP_X * self.room_x)
                 #     all_sprites.add(self.plaer)
 
-    def sprite_player(self, x, y):
-        player = Player(x, y)
-        all_sprites.add(player)
+
+    # def sprite_ghost(self, x, y):
+    #     ghost = Ghost(self.cord_pl(), x, y)
+    #     all_sprites.add(ghost)
 
 
     def cord_pl(self):
-        return self.plaer
+        return [self.player.rect.x // ZOOM, self.player.rect.y // ZOOM]
 
 
     # читаем файл с txt картой
@@ -239,6 +230,25 @@ class Map:
         elif x > 0 < y:
             Mapp = Map(file_name='1.txt', room_x=0, room_y=1)
 
+class Box(pygame.sprite.Sprite):
+    # передаём координаты объекта на карте
+    def __init__(self, x, y):
+        # наследуем встроенный класс Sprite
+        pygame.sprite.Sprite.__init__(self)
+        # путь к файлу где находится программа
+        game_folder = os.path.dirname(__file__)
+        img_folder = os.path.join(game_folder, 'img')
+        # загружаем картинку ящика
+        self.image = pygame.image.load(
+            os.path.join(img_folder, 'Box.jpg')).convert()
+        self.rect = self.image.get_rect()
+        # указываем координаты верхнкго левого угла
+        self.rect.topleft = (x, y)
+        self.x = x
+        self.y = y
+
+    def update(self):
+        pass
 
 class Game_over(pygame.sprite.Sprite):
     def __init__(self):
